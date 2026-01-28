@@ -1,65 +1,151 @@
-import Image from "next/image";
+import { UserButton } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
+import Link from 'next/link';
 
-export default function Home() {
+export default async function Home() {
+  const { userId } = await auth();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      {/* Navigation */}
+      <nav className="border-b bg-white/50 backdrop-blur-sm fixed w-full top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link href="/" className="text-2xl font-bold text-blue-600">
+                SaaS POC
+              </Link>
+            </div>
+            <div className="flex items-center gap-4">
+              {userId && (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="text-gray-700 hover:text-blue-600 font-medium transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                  <UserButton afterSignOutUrl="/" />
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 tracking-tight mb-6">
+            Welcome to{' '}
+            <span className="text-blue-600">SaaS POC</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            A complete SaaS boilerplate with Clerk authentication, Razorpay subscriptions, and role-based access control.
           </p>
+          <div className="flex gap-4 justify-center">
+            {userId ? (
+              <Link
+                href="/dashboard"
+                className="px-8 py-4 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/sign-in"
+                className="px-8 py-4 bg-blue-600 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+              >
+                Get Started
+              </Link>
+            )}
+            <Link
+              href="/pricing"
+              className="px-8 py-4 bg-white text-blue-600 border-2 border-blue-600 rounded-lg text-lg font-semibold hover:bg-blue-50 transition-colors shadow-lg hover:shadow-xl"
+            >
+              Pricing
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </div>
+
+      {/* Features Section */}
+      <div className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+            Key Features
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <FeatureCard
+              icon="🔐"
+              title="Clerk Authentication"
+              description="Secure user authentication and management with Clerk"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <FeatureCard
+              icon="💳"
+              title="Razorpay Subscriptions"
+              description="Seamless recurring payments with Razorpay integration"
+            />
+            <FeatureCard
+              icon="🛡️"
+              title="RBAC"
+              description="Role-based access control for feature gating"
+            />
+            <FeatureCard
+              icon="🔄"
+              title="Webhook Syncing"
+              description="Automatic subscription status updates via webhooks"
+            />
+            <FeatureCard
+              icon="🚀"
+              title="Next.js 15"
+              description="Built with the latest Next.js features and best practices"
+            />
+            <FeatureCard
+              icon="⚡"
+              title="TypeScript"
+              description="Fully typed with TypeScript for better developer experience"
+            />
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* CTA Section */}
+      <div className="py-20 bg-blue-600">
+        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl font-bold text-white mb-4">
+            Ready to get started?
+          </h2>
+          <p className="text-xl text-blue-100 mb-8">
+            Start building your SaaS application today with our powerful boilerplate.
+          </p>
+          {!userId && (
+            <Link
+              href="/sign-up"
+              className="inline-block px-8 py-4 bg-white text-blue-600 rounded-lg text-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl"
+            >
+              Sign Up Now
+            </Link>
+          )}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-gray-400 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p>© 2026 SaaS POC. Built with Next.js, Clerk, and Razorpay.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function FeatureCard({ icon, title, description }: { icon: string; title: string; description: string }) {
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
+      <div className="text-4xl mb-4">{icon}</div>
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
     </div>
   );
 }
